@@ -1,0 +1,5 @@
+config BR2_PACKAGE_UBOOT_VIM3L
+	bool "Pre-built U-Boot for VIM3L"
+	help
+	  Pre-built uboot binaries for VIM3L
+	  https://github.com/thauti/vim3l-uboot

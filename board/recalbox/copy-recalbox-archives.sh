@@ -67,6 +67,22 @@ c2_fusing() {
     dd if=$UBOOT of="$RECALBOXIMG" conv=fsync,notrunc bs=512 seek=97
 }
 
+vim3l_fusing() {
+    BINARIES_DIR=$1
+    RECALBOXIMG=$2
+
+    if [ ! -f "${RECALBOXIMG}" ] ; then
+        echo "Can't fuse: missing ${RECALBOXIMG}"
+        exit 1
+    fi
+    # fusing
+    UBOOT_SD="${BINARIES_DIR}/u-boot.bin.sd.bin"
+
+    echo "fusing vim3l image ..."
+    dd if=$UBOOT_SD   of="$RECALBOXIMG" conv=fsync,notrunc bs=1 count=444
+    dd if=$UBOOT_SD   of="$RECALBOXIMG" conv=fsync,notrunc bs=512 skip=1 seek=1
+}
+
 RECALBOX_BINARIES_DIR="${BINARIES_DIR}/recalbox"
 RECALBOX_TARGET_DIR="${TARGET_DIR}/recalbox"
 
@@ -121,6 +137,27 @@ case "${RECALBOX_TARGET}" in
         # recalbox.img
         support/scripts/genimage.sh -c "${BR2_EXTERNAL_RECALBOX_PATH}/board/recalbox/xu4/genimage.cfg" || exit 1
 	xu4_fusing "${BINARIES_DIR}" "${BINARIES_DIR}/recalbox.img" || exit 1
+        sync || exit 1
+        ;;
+
+    VIM3L)
+        for F in bl1.bin.hardkernel bl2.bin.hardkernel tzsw.bin.hardkernel u-boot.bin.hardkernel
+        do
+            cp "${BUILD_DIR}/uboot-xu4-odroidxu3-v2012.07/sd_fuse/hardkernel/${F}" "${BINARIES_DIR}" || exit 1
+        done
+
+        # /boot
+        cp "${BR2_EXTERNAL_RECALBOX_PATH}/board/recalbox/xu4/boot.ini" ${BINARIES_DIR}/boot.ini || exit 1
+
+        # root.tar.xz
+        cp "${BINARIES_DIR}/rootfs.tar.xz" "${RECALBOX_BINARIES_DIR}/root.tar.xz" || exit 1
+
+        # boot.tar.xz
+        (cd "${BINARIES_DIR}" && tar -cJf "${RECALBOX_BINARIES_DIR}/boot.tar.xz" boot.ini zImage khadas-vim3l.dtb recalbox-boot.conf) || exit 1
+
+        # recalbox.img
+        support/scripts/genimage.sh -c "${BR2_EXTERNAL_RECALBOX_PATH}/board/recalbox/vim3l/genimage.cfg" || exit 1
+	    vim3l_fusing "${BINARIES_DIR}" "${BINARIES_DIR}/recalbox.img" || exit 1
         sync || exit 1
         ;;
 
