@@ -10,7 +10,6 @@ UBOOT_VIM_INSTALL_TARGET = NO
 UBOOT_VIM_INSTALL_IMAGES = YES
 
 define UBOOT_VIM_INSTALL_IMAGES_CMDS
-	cp -dpf $(@D)/u-boot.bin.sd.bin \
-		$(BINARIES_DIR)
+	cp -dpf $(@D)/u-boot.bin.sd.bin $(BINARIES_DIR)
 endef
 $(eval $(generic-package))

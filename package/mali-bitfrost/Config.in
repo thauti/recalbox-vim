@@ -1,0 +1,23 @@
+config BR2_PACKAGE_MALI_BITFROST
+	bool "MALI_BITFROST"
+	depends on BR2_arm || BR2_aarch64
+	select BR2_PACKAGE_MALI_OPENGLES_SDK
+	select BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_HAS_LIBGLES
+	help
+	  Install the binary user-space components for the
+	  ARM Mali Bitfrost family. This package requires a
+	  kernel with the ARM Mali Midgard GPU Kernel Drivers enabled.
+	  https://developer.arm.com/tools-and-software/graphics-and-gaming/mali-drivers/user-space
+
+if BR2_PACKAGE_MALI_BITFROST
+
+config BR2_PACKAGE_PROVIDES_LIBEGL
+	default "mali-bitfrost"
+
+config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "mali-bitfrost"
+
+endif
+
+comment "mali-bitfrost"

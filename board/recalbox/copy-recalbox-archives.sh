@@ -141,19 +141,16 @@ case "${RECALBOX_TARGET}" in
         ;;
 
     VIM3L)
-        for F in bl1.bin.hardkernel bl2.bin.hardkernel tzsw.bin.hardkernel u-boot.bin.hardkernel
-        do
-            cp "${BUILD_DIR}/uboot-xu4-odroidxu3-v2012.07/sd_fuse/hardkernel/${F}" "${BINARIES_DIR}" || exit 1
-        done
-
         # /boot
-        cp "${BR2_EXTERNAL_RECALBOX_PATH}/board/recalbox/xu4/boot.ini" ${BINARIES_DIR}/boot.ini || exit 1
+        mkimage -A arm -O linux -T script -C none -d ${BR2_EXTERNAL_RECALBOX_PATH}/board/recalbox/vim3l/boot.ini ${BINARIES_DIR}/s905_autoscript || exit 1
+        cp ${BINARIES_DIR}/kvim3l_linux.dtb ${BINARIES_DIR}/dtb.img
+        cp "${BR2_EXTERNAL_RECALBOX_PATH}/board/recalbox/vim3l/boot.ini" ${BINARIES_DIR}/boot.ini || exit 1
 
         # root.tar.xz
         cp "${BINARIES_DIR}/rootfs.tar.xz" "${RECALBOX_BINARIES_DIR}/root.tar.xz" || exit 1
 
         # boot.tar.xz
-        (cd "${BINARIES_DIR}" && tar -cJf "${RECALBOX_BINARIES_DIR}/boot.tar.xz" boot.ini zImage khadas-vim3l.dtb recalbox-boot.conf) || exit 1
+        (cd "${BINARIES_DIR}" && tar -cJf "${RECALBOX_BINARIES_DIR}/boot.tar.xz" boot.ini s905_autoscript dtb.img Image kvim3l_linux.dtb recalbox-boot.conf) || exit 1
 
         # recalbox.img
         support/scripts/genimage.sh -c "${BR2_EXTERNAL_RECALBOX_PATH}/board/recalbox/vim3l/genimage.cfg" || exit 1
